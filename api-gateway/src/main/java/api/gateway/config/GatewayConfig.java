@@ -15,24 +15,26 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 public class GatewayConfig {
 
+    private static final String USER_SERVICE_ROUTE_NAME = "user-service-route";
+    private static final String USER_SERVICE_CIRCUIT_BREAKER_NAME = "user-service-circuit-breaker";
+    private static final String FALLBACK_URI = "forward:/fallback";
+    private static final String LB_USER_SERVICE_URI = "lb://USER-SERVICE";
+
     private final LoggingFilter loggingFilter;
 
     @Bean
     public RouteLocator routesLocator(RouteLocatorBuilder builder) {
         return builder.routes()
-                .route("user-service-route", p -> p
+                .route(USER_SERVICE_ROUTE_NAME, p -> p
                         .path("/api/v1/users/**")
                         .filters(f -> f
-                                .filter(loggingFilter.apply(new LoggingFilter.Config()))
-                                .addRequestHeader("Hello", "World")
+                                        .filter(loggingFilter.apply(new LoggingFilter.Config()))
+                                        .circuitBreaker(config -> config
+                                                .setName(USER_SERVICE_CIRCUIT_BREAKER_NAME)
+                                                .setFallbackUri(FALLBACK_URI))
+                                //.addRequestHeader("headerName", "headerValue")
                         )
-                        .uri("lb://USER-SERVICE"))
-                .route(p -> p
-                        .host("*.circuitbreaker.com")
-                        .filters(f -> f.circuitBreaker(config -> config
-                                .setName("mycmd")
-                                .setFallbackUri("forward:/fallback")))
-                        .uri("http://httpbin.org:80"))
+                        .uri(LB_USER_SERVICE_URI))
                 .build();
     }
 
