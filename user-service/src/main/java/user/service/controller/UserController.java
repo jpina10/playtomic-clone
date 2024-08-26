@@ -24,7 +24,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import user.service.dto.CreateUserDto;
-import user.service.dto.CreateUserResponse;
 import user.service.dto.UserDto;
 import user.service.dto.UserSearchCriteriaDto;
 import user.service.security.Secured;
