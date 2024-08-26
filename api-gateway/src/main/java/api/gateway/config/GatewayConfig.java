@@ -16,6 +16,7 @@ import reactor.core.publisher.Mono;
 public class GatewayConfig {
 
     private static final String USER_SERVICE_ROUTE_NAME = "user-service-route";
+    public static final String USER_URL = "/api/v1/users/**";
     private static final String USER_SERVICE_CIRCUIT_BREAKER_NAME = "user-service-circuit-breaker";
     private static final String FALLBACK_URI = "forward:/fallback";
     private static final String LB_USER_SERVICE_URI = "lb://USER-SERVICE";
@@ -26,7 +27,7 @@ public class GatewayConfig {
     public RouteLocator routesLocator(RouteLocatorBuilder builder) {
         return builder.routes()
                 .route(USER_SERVICE_ROUTE_NAME, p -> p
-                        .path("/api/v1/users/**")
+                        .path(USER_URL)
                         .filters(f -> f
                                         .filter(loggingFilter.apply(new LoggingFilter.Config()))
                                         .circuitBreaker(config -> config
