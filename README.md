@@ -14,7 +14,14 @@ The architecture facilitates parallel execution of these services and includes a
 To run the application, follow these steps:
 
 * Set Up the User Service:
-  * Specify the profile in the user-service and generate the RSA keys.
+  * Specify the profile in the user-service
+  * Generate the RSA keys:
+    * ```openssl genrsa >  private.pem```
+    * ```openssl rsa -in private.pem -pubout -out public.pem```
+    * ```openssl genrsa -out keypair.pem 2048```
+    * ```openssl rsa -in keypair.pem -pubout -out publickey.crt```
+    * ```openssl pkcs8 -topk8 -inform PEM -outform PEM -nocrypt -in keypair.pem -out pkcs8.key```
+    * ```move pkcs.key and publickey.crt to resources folder```
 
 * Launch the Eureka Server:
   * Start the Eureka server first to allow other services to register.
