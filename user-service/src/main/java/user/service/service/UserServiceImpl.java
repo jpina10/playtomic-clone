@@ -83,7 +83,7 @@ public class UserServiceImpl implements UserService {
     public void deleteUser(String username) {
         User user = this.getUser(username);
 
-        log.debug(DELETING, user.getUsername());
+        log.info(DELETING, user.getUsername());
         userRepository.delete(user);
     }
 
@@ -91,14 +91,14 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public void updateUser(String username, JsonPatch jsonPatch) {
         User originalUser = this.getUser(username);
-        log.debug(ORIGINAL_USER, originalUser);
+        log.info(ORIGINAL_USER, originalUser);
 
         JsonStructure target = objectMapper.convertValue(originalUser, JsonStructure.class);
         JsonValue patched = jsonPatch.apply(target);
 
         var patchedUser = objectMapper.convertValue(patched, User.class);
 
-        log.debug(PATCHED_USER, patchedUser);
+        log.info(PATCHED_USER, patchedUser);
         userRepository.save(patchedUser);
     }
 
