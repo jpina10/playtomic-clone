@@ -1,5 +1,6 @@
 package user.service.controller;
 
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -19,12 +20,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import user.service.dto.CreateUserDto;
+import user.service.dto.LoginDto;
 import user.service.dto.UserDto;
+import user.service.dto.UserLoginDto;
 import user.service.dto.UserSearchCriteriaDto;
 import user.service.security.Secured;
 import user.service.service.UserService;
@@ -33,7 +35,7 @@ import javax.json.JsonPatch;
 import java.util.List;
 
 @RestController
-@Tag(name = "Users", description = "Users")
+@Tag(name = "User Details", description = "Details of Users")
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/users")
 @Secured
@@ -41,33 +43,35 @@ public class UserController {
 
     private final UserService userService;
 
-    @Operation(summary = "Retrieves a User given a username")
-    @GetMapping(value = "/{username}")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "The User has been returned", content = @Content(schema = @Schema(implementation = UserDto.class))),
-            @ApiResponse(responseCode = "404", description = "The User has not been found", content = @Content)})
-    public UserDto findUserByUsername(@Parameter(name = "username") @PathVariable String username) {
-        return userService.findUserByUserName(username);
+    @GetMapping("/{email}")
+    public UserDto findUserByEmail(@Parameter(name = "email") @PathVariable String email) {
+        return userService.findUserByEmail(email);
     }
 
-    @Operation(summary = "Retrieves a User given a search criteria")
+    @Hidden
+    @PostMapping("/login")
+    public UserLoginDto login(@RequestBody LoginDto loginDto) {
+        return userService.findUserByEmailAndPassword(loginDto.email(), loginDto.password());
+    }
+
+    @Operation(summary = "Retrieves a User Details given a search criteria")
     @GetMapping("/search")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "The User has been returned", content = @Content(schema = @Schema(implementation = UserDto.class))),
-            @ApiResponse(responseCode = "404", description = "The User has not been found", content = @Content)})
-    public List<UserDto> findUsersByCriteria(@ParameterObject UserSearchCriteriaDto searchCriteria, @ParameterObject Pageable pageable) {
+            @ApiResponse(responseCode = "200", description = "The User Details have been returned", content = @Content(schema = @Schema(implementation = UserDto.class))),
+            @ApiResponse(responseCode = "404", description = "The User Details has not been found", content = @Content)})
+    public List<UserDto> findUserByCriteria(@ParameterObject UserSearchCriteriaDto searchCriteria, @ParameterObject Pageable pageable) {
         return userService.findUsersByCriteria(searchCriteria, pageable);
     }
 
-    @Operation(summary = "Creates a User")
+    @Operation(summary = "Creates a User Details")
     @PostMapping
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "The User has been created"),
     })
-    public ResponseEntity<UserDto> createUser(@Valid @RequestBody CreateUserDto createUserDto) {
-        UserDto userCreated = userService.createUser(createUserDto);
+    public ResponseEntity<Void> createUser(@Valid @RequestBody CreateUserDto createUserDto) {
+        userService.createUser(createUserDto);
 
-        return new ResponseEntity<>(userCreated, HttpStatus.CREATED);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @GetMapping
@@ -76,19 +80,14 @@ public class UserController {
     }
 
     @PreAuthorize("hasRole('ADMIN') || hasAuthority('SCOPE_ADMIN')")
-    @DeleteMapping("/{username}")
-    public void deleteUser(@Parameter(name = "username") @PathVariable String username) {
-        userService.deleteUser(username);
+    @DeleteMapping("/{email}")
+    public void deleteUser(@Parameter(name = "email") @PathVariable String email) {
+        userService.deleteUser(email);
     }
 
-    @PutMapping("/{username}")
-    public void enableUser(@Parameter(name = "username") @PathVariable String username) {
-        userService.enableUser(username);
-    }
-
-    @PatchMapping(value = "/{username}", consumes = "application/json-patch+json")
-    public void updateUser(@Parameter(name = "username") @PathVariable String username, @RequestBody JsonPatch jsonPatch) {
-        userService.updateUser(username, jsonPatch);
+    @PatchMapping(value = "/{email}", consumes = "application/json-patch+json")
+    public void updateUser(@Parameter(name = "email") @PathVariable String email, @RequestBody JsonPatch jsonPatch) {
+        userService.updateUser(email, jsonPatch);
     }
 
 }

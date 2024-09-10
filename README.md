@@ -14,7 +14,7 @@ The architecture facilitates parallel execution of these services and includes a
 To run the application, follow these steps:
 
 * Set Up the User Service:
-  * Specify the profile in the user-service
+  * Specify the profile in the userDetails-service
   * Generate the RSA keys:
     * ```openssl genrsa >  private.pem```
     * ```openssl rsa -in private.pem -pubout -out public.pem```

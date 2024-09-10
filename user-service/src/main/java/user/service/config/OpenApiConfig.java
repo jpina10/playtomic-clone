@@ -12,16 +12,14 @@ public class OpenApiConfig {
 
     @Bean
     public OpenAPI customOpenAPI() {
-        SecurityScheme securitySchemeBasic = getBasicSecurityScheme();
         SecurityScheme securitySchemeBearer = getBearerSecurityScheme();
 
         return new OpenAPI()
                 .components(new Components()
-                        .addSecuritySchemes(securitySchemeBasic.getName(), securitySchemeBasic)
                         .addSecuritySchemes(securitySchemeBearer.getName(), securitySchemeBearer))
                 .info(new Info()
-                        .title("Users API")
-                        .description("CRUD API for users")
+                        .title("Users Details microservice")
+                        .description("This is a microservice that does CRUD operation in the user details ")
                         .summary("summary").version("v1"));
     }
 
@@ -29,15 +27,6 @@ public class OpenApiConfig {
         SecurityScheme securitySchemeBasic = new SecurityScheme();
         securitySchemeBasic.setName("Bearer Authentication");
         securitySchemeBasic.scheme("bearer");
-        securitySchemeBasic.type(SecurityScheme.Type.HTTP);
-        securitySchemeBasic.in(SecurityScheme.In.HEADER);
-        return securitySchemeBasic;
-    }
-
-    private static SecurityScheme getBasicSecurityScheme() {
-        SecurityScheme securitySchemeBasic = new SecurityScheme();
-        securitySchemeBasic.setName("Basic Authentication");
-        securitySchemeBasic.scheme("basic");
         securitySchemeBasic.type(SecurityScheme.Type.HTTP);
         securitySchemeBasic.in(SecurityScheme.In.HEADER);
         return securitySchemeBasic;

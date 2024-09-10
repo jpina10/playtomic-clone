@@ -1,16 +1,17 @@
-package user.service.util.validator.user;
+package user.service.util.validator.email;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import jakarta.validation.ValidationException;
 import user.service.util.validator.Text;
 import user.service.util.validator.ValidationMessages;
+
 import static user.service.util.Guard.guard;
 
-public class UsernameValidator implements ConstraintValidator<ValidUsername, String> {
+public class EmailValidator implements ConstraintValidator<ValidEmail, String> {
 
     @Override
-    public void initialize(ValidUsername constraintAnnotation) {
+    public void initialize(ValidEmail constraintAnnotation) {
         ConstraintValidator.super.initialize(constraintAnnotation);
     }
 

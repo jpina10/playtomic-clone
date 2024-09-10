@@ -5,6 +5,7 @@ import org.mapstruct.Mapping;
 import user.service.dto.CreateUserDto;
 import user.service.dto.UserDto;
 import user.service.model.User;
+
 import java.time.LocalDateTime;
 
 @Mapper
@@ -19,5 +20,4 @@ public interface UserMapper {
     default LocalDateTime getNow() {
         return LocalDateTime.now();
     }
-
 }

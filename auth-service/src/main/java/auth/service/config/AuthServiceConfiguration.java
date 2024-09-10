@@ -39,7 +39,9 @@ public class AuthServiceConfiguration {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(requests -> requests
                         .requestMatchers(antMatcher("/h2-console/**")).permitAll()
+                        .requestMatchers(antMatcher("/**")).permitAll()
                         .requestMatchers(antMatcher(HttpMethod.POST, "/auth/login")).permitAll()
+                        .requestMatchers(antMatcher(HttpMethod.POST, "/auth/register")).permitAll()
                         .anyRequest().authenticated())
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()))
                 .build();

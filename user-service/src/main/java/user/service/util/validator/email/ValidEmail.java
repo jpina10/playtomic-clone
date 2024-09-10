@@ -1,4 +1,4 @@
-package user.service.util.validator.user;
+package user.service.util.validator.email;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
@@ -10,8 +10,8 @@ import java.lang.annotation.Target;
 
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
-@Constraint(validatedBy = UsernameValidator.class)
-public @interface ValidUsername {
+@Constraint(validatedBy = EmailValidator.class)
+public @interface ValidEmail {
 
     String message() default "Invalid Username";
 

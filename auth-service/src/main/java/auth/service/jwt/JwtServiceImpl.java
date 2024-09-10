@@ -1,10 +1,6 @@
 package auth.service.jwt;
 
-import auth.service.dto.LoginRequest;
-import auth.service.exception.model.UserNotFoundException;
-import auth.service.exception.validation.SecurityInputValidationException;
-import auth.service.model.User;
-import auth.service.repository.UserRepository;
+import auth.service.client.dto.UserDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
@@ -13,8 +9,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.util.stream.Collectors;
-
-import static auth.service.message.SecurityMessages.WRONG_USERNAME_OR_PASSWORD;
 
 
 @Service
@@ -26,23 +20,15 @@ public class JwtServiceImpl implements JwtService {
     private static final String SCOPE = "scope";
 
     private final JwtEncoder jwtEncoder;
-    private final UserRepository userRepository;
 
     @Override
-    public String generateToken(LoginRequest loginRequest) {
-        User user = userRepository.findByEmail(loginRequest.email())
-                .orElseThrow(() -> new UserNotFoundException(loginRequest.email()));
-
-        if (!user.getPassword().equals(loginRequest.password())) {
-            throw new SecurityInputValidationException(WRONG_USERNAME_OR_PASSWORD);
-        }
-
+    public String generateJwtToken(UserDto userDto) {
         var now = Instant.now();
-        String roles = user.getRoles().stream().map(Enum::name).collect(Collectors.joining(" "));
+        String roles = userDto.getRoles().stream().map(Enum::name).collect(Collectors.joining(" "));
 
         var claims = JwtClaimsSet.builder()
                 .issuer(ISSUER)
-                .subject(String.valueOf(user.getId()))
+                .subject(String.valueOf(userDto.getEmail()))
                 .expiresAt(now.plusSeconds(EXPIRES_IN))
                 .issuedAt(now)
                 .claim(SCOPE, roles)

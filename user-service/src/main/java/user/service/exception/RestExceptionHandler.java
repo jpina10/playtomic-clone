@@ -11,8 +11,8 @@ import user.service.exception.model.AccessException;
 import user.service.exception.model.ResourceAlreadyExistsException;
 import user.service.exception.model.ResourceNotFoundException;
 import user.service.exception.rest.RestErrorMessage;
-import user.service.exception.validation.SecurityInputValidationException;
 
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.stream.Collectors;
 
 @ControllerAdvice
@@ -31,17 +31,17 @@ public class RestExceptionHandler {
         return handleException(exception);
     }
 
-    @ExceptionHandler(AccessException.class)
+    @ExceptionHandler(AccessException.class)//for specification
     private ResponseEntity<RestErrorMessage> illegalAccessHandler(AccessException exception) {
         return handleException(exception);
     }
 
-    @ExceptionHandler(SecurityInputValidationException.class)
-    private ResponseEntity<RestErrorMessage> securityInputHandler(SecurityInputValidationException exception) {
+    @ExceptionHandler(SQLIntegrityConstraintViolationException.class)
+    private ResponseEntity<RestErrorMessage> uniqueConstraintViolationHandler(SQLIntegrityConstraintViolationException exception) {
         return handleException(exception);
     }
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ExceptionHandler(MethodArgumentNotValidException.class) //for custom annotations
     private ResponseEntity<RestErrorMessage> invalidInputHandler(MethodArgumentNotValidException exception) {
 
         String message = exception.getBindingResult()

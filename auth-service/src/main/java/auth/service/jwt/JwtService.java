@@ -1,7 +1,7 @@
 package auth.service.jwt;
 
-import auth.service.dto.LoginRequest;
+import auth.service.client.dto.UserDto;
 
 public interface JwtService {
-    String generateToken(LoginRequest loginRequest);
+    String generateJwtToken(UserDto user);
 }

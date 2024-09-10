@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class UsersApiConfig {
+public class UserApiConfig {
 
     @Bean
     public ObjectMapper objectMapper() {
