@@ -9,6 +9,7 @@ import static user.service.util.Guard.guard;
 import static user.service.util.validator.ValidationMessages.CANNOT_BE_NULL_OR_EMPTY;
 import static user.service.util.validator.ValidationMessages.PASSWORD_CANNOT_BE_INFERIOR;
 
+
 public class PasswordValidator implements ConstraintValidator<ValidPassword, String> {
 
     @Override

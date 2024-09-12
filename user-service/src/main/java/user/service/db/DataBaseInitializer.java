@@ -22,12 +22,15 @@ public class DataBaseInitializer implements CommandLineRunner {
     public void run(String... args) {
         addAdminUser();
         addDefaultUser();
+        addUserWithTwoRoles();
     }
 
     private void addAdminUser() {
         User user = new User();
-        user.setUsername("admin");
+        user.setEmail("admin");
         user.setPassword("admin");
+        user.setName("admin");
+        user.setPhoneNumber("123456789");
         user.setRoles(Set.of(Role.ADMIN));
 
         userRepository.save(user);
@@ -35,9 +38,22 @@ public class DataBaseInitializer implements CommandLineRunner {
 
     private void addDefaultUser() {
         User user = new User();
-        user.setUsername("username");
+        user.setEmail("user");
         user.setPassword("password");
+        user.setName("user");
+        user.setPhoneNumber("12345678");
         user.setRoles(Set.of(Role.USER));
+
+        userRepository.save(user);
+    }
+
+    private void addUserWithTwoRoles() {
+        User user = new User();
+        user.setEmail("userTwoRoles");
+        user.setPassword("password");
+        user.setName("two roles");
+        user.setPhoneNumber("1234567");
+        user.setRoles(Set.of(Role.USER, Role.ADMIN));
 
         userRepository.save(user);
     }

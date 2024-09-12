@@ -11,10 +11,12 @@ import org.springframework.transaction.annotation.Transactional;
 import user.service.dto.CreateUserDto;
 import user.service.dto.UserCriteriaSpecification;
 import user.service.dto.UserDto;
+import user.service.dto.UserLoginDto;
 import user.service.dto.UserSearchCriteriaDto;
 import user.service.exception.model.AccessException;
 import user.service.exception.model.UserAlreadyExistsException;
 import user.service.exception.model.UserNotFoundException;
+import user.service.exception.model.UserWithPasswordNotFoundException;
 import user.service.mapper.UserMapper;
 import user.service.model.User;
 import user.service.repository.UserRepository;
@@ -32,7 +34,6 @@ import static user.service.util.log.LoggingMessages.PATCHED_USER;
 import static user.service.util.log.LoggingMessages.RETRIEVING;
 import static user.service.util.log.LoggingMessages.SAVING;
 
-
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -44,18 +45,22 @@ public class UserServiceImpl implements UserService {
     private final ObjectMapper objectMapper;
 
     @Override
+    public UserDto findUserByEmail(String email) {
+        return userMapper.toDto(getUserByEmail(email));
+    }
+
+    @Override
+    public UserLoginDto findUserByEmailAndPassword(String email, String password) {
+        User user = getUserByEmailAndPassword(email, password);
+
+        return new UserLoginDto(user.getEmail(), user.getRoles());
+    }
+
+    @Override
     public List<UserDto> findAllUsers(Pageable pageable) {
         var users = userRepository.findAll(pageable);
 
         return users.map(userMapper::toDto).toList();
-    }
-
-    @Override
-    public UserDto findUserByUserName(String username) {
-        log.info(RETRIEVING, username);
-        return userRepository.findByUsername(username)
-                .map(userMapper::toDto)
-                .orElseThrow(() -> new UserNotFoundException(username));
     }
 
     @Override
@@ -69,28 +74,17 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public UserDto createUser(CreateUserDto createUserDto) {
-        existsUser(createUserDto.getUsername());
+    public void deleteUser(String email) {
+        User user = this.getUserByEmail(email);
 
-        log.info(SAVING, createUserDto.getUsername());
-        User user = userRepository.save(userMapper.toEntity(createUserDto));
-
-        return userMapper.toDto(user);
-    }
-
-    @Override
-    @Transactional
-    public void deleteUser(String username) {
-        User user = this.getUser(username);
-
-        log.info(DELETING, user.getUsername());
+        log.info(DELETING, user.getEmail());
         userRepository.delete(user);
     }
 
     @Override
     @Transactional
-    public void updateUser(String username, JsonPatch jsonPatch) {
-        User originalUser = this.getUser(username);
+    public void updateUser(String email, JsonPatch jsonPatch) {
+        User originalUser = this.getUserByEmail(email);
         log.info(ORIGINAL_USER, originalUser);
 
         JsonStructure target = objectMapper.convertValue(originalUser, JsonStructure.class);
@@ -104,21 +98,30 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void enableUser(String username) {
-        var user = this.getUser(username);
+    public void createUser(CreateUserDto createUserDto) {
+        existsUser(createUserDto.getEmail());
 
-        user.setEnabled(true);
-        userRepository.save(user);
+        log.info(SAVING, createUserDto.getEmail());
+        userRepository.save(userMapper.toEntity(createUserDto));
     }
 
-    private User getUser(String username) {
-        return userRepository.findByUsername(username)
-                .orElseThrow(() -> new UserNotFoundException(username));
+    private User getUserByEmail(String email) {
+        log.info(RETRIEVING, email);
+
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException(email));
     }
 
-    private void existsUser(String username) {
-        userRepository.findByUsername(username).ifPresent(user -> {
-            throw new UserAlreadyExistsException(username);
+    private User getUserByEmailAndPassword(String email, String password) {
+        log.info(RETRIEVING, email, password);
+
+        return userRepository.findByEmailAndPassword(email, password)
+                .orElseThrow(UserWithPasswordNotFoundException::new);
+    }
+
+    private void existsUser(String email) {
+        userRepository.findByEmail(email).ifPresent(user -> {
+            throw new UserAlreadyExistsException(email);
         });
     }
 

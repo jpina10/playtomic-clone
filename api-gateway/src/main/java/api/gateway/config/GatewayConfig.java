@@ -16,10 +16,13 @@ import reactor.core.publisher.Mono;
 public class GatewayConfig {
 
     private static final String USER_SERVICE_ROUTE_NAME = "user-service-route";
+    private static final String AUTHENTICATION_SERVICE_ROUTE_NAME = "authentication-service-route";
     private static final String USER_URL = "/api/v1/users/**";
+    private static final String AUTHENTICATION_URL = "/auth/login";
     private static final String USER_SERVICE_CIRCUIT_BREAKER_NAME = "user-service-circuit-breaker";
     private static final String FALLBACK_URI = "forward:/fallback";
     private static final String LB_USER_SERVICE_URI = "lb://USER-SERVICE";
+    private static final String LB_AUTHENTICATION_SERVICE_URI = "lb://AUTHENTICATION-SERVICE";
 
     private final LoggingFilter loggingFilter;
 
@@ -36,6 +39,12 @@ public class GatewayConfig {
                                 //.addRequestHeader("headerName", "headerValue")
                         )
                         .uri(LB_USER_SERVICE_URI))
+                .route(AUTHENTICATION_SERVICE_ROUTE_NAME, p -> p
+                        .path(AUTHENTICATION_URL)
+                        .filters(f -> f
+                                .filter(loggingFilter.apply(new LoggingFilter.Config()))
+                        )
+                        .uri(LB_AUTHENTICATION_SERVICE_URI))
                 .build();
     }
 

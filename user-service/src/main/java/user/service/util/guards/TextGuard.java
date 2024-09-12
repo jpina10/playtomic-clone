@@ -1,6 +1,5 @@
 package user.service.util.guards;
 
-
 import user.service.util.validator.Text;
 
 public class TextGuard extends BaseGuard<Text> {
