@@ -20,11 +20,11 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
-    <groupId>user.details.service</groupId>
+    <groupId>user.service</groupId>
     <artifactId>user-service</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>user-details-service</name>
-    <description>user-details-service</description>
+    <name>user-service</name>
+    <description>user-service</description>
     <url/>
     <licenses>
         <license/>

@@ -18,8 +18,8 @@ public class OpenApiConfig {
                 .components(new Components()
                         .addSecuritySchemes(securitySchemeBearer.getName(), securitySchemeBearer))
                 .info(new Info()
-                        .title("Users Details microservice")
-                        .description("This is a microservice that does CRUD operation in the user details ")
+                        .title("User microservice")
+                        .description("This is a microservice that does CRUD operation in the users")
                         .summary("summary").version("v1"));
     }
 

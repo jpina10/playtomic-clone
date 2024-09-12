@@ -35,7 +35,8 @@ import javax.json.JsonPatch;
 import java.util.List;
 
 @RestController
-@Tag(name = "User Details", description = "Details of Users")
+@Tag(name = "User", description = "Users")
+@Tag(name = "User", description = "Users")
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/users")
 @Secured
@@ -54,16 +55,16 @@ public class UserController {
         return userService.findUserByEmailAndPassword(loginDto.email(), loginDto.password());
     }
 
-    @Operation(summary = "Retrieves a User Details given a search criteria")
+    @Operation(summary = "Retrieves a User given a search criteria")
     @GetMapping("/search")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "The User Details have been returned", content = @Content(schema = @Schema(implementation = UserDto.class))),
-            @ApiResponse(responseCode = "404", description = "The User Details has not been found", content = @Content)})
+            @ApiResponse(responseCode = "200", description = "The User have been returned", content = @Content(schema = @Schema(implementation = UserDto.class))),
+            @ApiResponse(responseCode = "404", description = "The User has not been found", content = @Content)})
     public List<UserDto> findUserByCriteria(@ParameterObject UserSearchCriteriaDto searchCriteria, @ParameterObject Pageable pageable) {
         return userService.findUsersByCriteria(searchCriteria, pageable);
     }
 
-    @Operation(summary = "Creates a User Details")
+    @Operation(summary = "Creates a User")
     @PostMapping
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "The User has been created"),
