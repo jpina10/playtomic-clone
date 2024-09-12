@@ -1,6 +1,5 @@
 package user.service.util;
 
-
 import lombok.experimental.UtilityClass;
 import user.service.util.guards.ObjectGuard;
 import user.service.util.guards.PasswordGuard;

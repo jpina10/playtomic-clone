@@ -2,9 +2,9 @@ package user.service.exception.model;
 
 public class UserNotFoundException extends ResourceNotFoundException{
 
-    private static final String USERNAME_NOT_FOUND = "User with username %s does not exist.";
+    private static final String EMAIL_NOT_FOUND = "User with email %s does not exist.";
 
     public UserNotFoundException(String value) {
-        super(String.format(USERNAME_NOT_FOUND, value));
+        super(String.format(EMAIL_NOT_FOUND, value));
     }
 }
