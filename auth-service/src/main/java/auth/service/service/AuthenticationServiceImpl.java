@@ -18,10 +18,18 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public String login(LoginRequestDto loginRequestDto) {
-        UserDto userDto = userClient.login(loginRequestDto);
 
-        //add user to cache
+        String cachedToken = jwtService.getCachedToken(loginRequestDto.email());
+
+        if (cachedToken != null){
+            log.info("cache hit, returning token for email: {}", loginRequestDto.email());
+            //validate if is valid
+            return cachedToken;
+        }
+
+        UserDto userDto = userClient.login(loginRequestDto);
 
         return jwtService.generateJwtToken(userDto);
     }
+
 }
