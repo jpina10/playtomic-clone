@@ -1,8 +1,8 @@
 package auth.service.service;
 
 import auth.service.client.UserClient;
-import auth.service.dto.LoginRequestDto;
 import auth.service.client.dto.UserDto;
+import auth.service.dto.LoginRequestDto;
 import auth.service.jwt.JwtService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,12 +20,23 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     public String login(LoginRequestDto loginRequestDto) {
 
-        String cachedToken = cacheService.getCachedToken(loginRequestDto.email());
+        String email = loginRequestDto.email();
 
-        if (cachedToken != null){
-            log.info("cache hit, returning token for email: {}", loginRequestDto.email());
-            //validate if is valid
-            return cachedToken;
+        String cachedToken = cacheService.getCachedToken(email);
+
+        if (cachedToken != null) {
+            log.info("cache hit, checking expiry date of token for email: {}", email);
+
+            boolean isExpired = jwtService.isTokenExpired(cachedToken);
+
+            if (!isExpired) {
+                return cachedToken;
+            }
+
+            log.info("token expired, removing cache entry");
+            cacheService.removeCachedToken(email);
+
+            log.info("validating credentials and generating new token...");
         }
 
         UserDto userDto = userClient.login(loginRequestDto);

@@ -4,7 +4,9 @@ import auth.service.client.dto.UserDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CachePut;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.stereotype.Service;
@@ -18,11 +20,12 @@ import java.util.stream.Collectors;
 @Slf4j
 public class JwtServiceImpl implements JwtService {
 
-    private static final long EXPIRES_IN = 300L;
+    private static final long EXPIRES_IN = 5L;
     private static final String ISSUER = "authentication-server";
     private static final String SCOPE = "scope";
 
     private final JwtEncoder jwtEncoder;
+    private final JwtDecoder jwtDecoder;
 
     @Override
     @CachePut(value = "tokens", key = "#userDto.email")
@@ -41,4 +44,13 @@ public class JwtServiceImpl implements JwtService {
         return jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
     }
 
+    @Override
+    public boolean isTokenExpired(String token) {
+        Jwt decodedToken = jwtDecoder.decode(token);
+
+        Instant expiresAt = decodedToken.getExpiresAt();
+
+        assert expiresAt != null;
+        return Instant.now().isAfter(expiresAt);
+    }
 }
