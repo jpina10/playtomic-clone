@@ -15,11 +15,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     private final UserClient userClient;
     private final JwtService jwtService;
+    private final CacheService cacheService;
 
     @Override
     public String login(LoginRequestDto loginRequestDto) {
 
-        String cachedToken = jwtService.getCachedToken(loginRequestDto.email());
+        String cachedToken = cacheService.getCachedToken(loginRequestDto.email());
 
         if (cachedToken != null){
             log.info("cache hit, returning token for email: {}", loginRequestDto.email());

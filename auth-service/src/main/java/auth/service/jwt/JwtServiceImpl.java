@@ -4,7 +4,6 @@ import auth.service.client.dto.UserDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
@@ -42,10 +41,4 @@ public class JwtServiceImpl implements JwtService {
         return jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
     }
 
-    @Cacheable(value = "tokens", key = "#email")
-    public String getCachedToken(String email) {
-
-        log.info("cache miss, adding {} and token to cache", email);
-        return null;
-    }
 }
