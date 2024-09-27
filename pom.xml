@@ -28,6 +28,7 @@
         <module>api-gateway</module>
         <module>auth-service</module>
         <module>venue-service</module>
+        <module>booking-service</module>
     </modules>
 
 </project>
